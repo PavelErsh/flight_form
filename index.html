@@ -443,10 +443,18 @@
             const route = document.getElementById('route_type').value;
             const equipment = form.querySelector('.equipment_type').value;
             const prepaymentAmount = parseFloat(form.querySelector('.prepayment_amount').value) || 0;
+            const isPrepaymentChecked = form.querySelector('.prepayment').checked;
 
             if (route && equipment) {
                 const baseCost = prices[route][equipment];
-                const finalCost = Math.round(baseCost - prepaymentAmount);
+                let finalCost = baseCost;
+
+                if (isPrepaymentChecked && prepaymentAmount > 0) {
+                    finalCost = Math.round(baseCost - (prepaymentAmount * 2));
+                } else {
+                    finalCost = Math.round(baseCost - prepaymentAmount);
+                }
+
                 form.querySelector('.single-cost').textContent = finalCost;
             } else {
                 form.querySelector('.single-cost').textContent = 0;
@@ -476,7 +484,7 @@
         // Слушаем изменения в выборе маршрута, техники и предоплаты
         document.getElementById('route_type').addEventListener('change', updateCost);
         document.getElementById('duplicated-forms').addEventListener('change', (e) => {
-            if (e.target.classList.contains('equipment_type') || e.target.classList.contains('prepayment_amount')) {
+            if (e.target.classList.contains('equipment_type') || e.target.classList.contains('prepayment_amount') || e.target.classList.contains('prepayment')) {
                 updateCost();
             }
         });
